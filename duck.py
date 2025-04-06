@@ -29,7 +29,7 @@ def get_vqd_token(query):
 def search_duckduckgo_images(query):
     """Search DuckDuckGo for images using the vqd token."""
     # Step 1: Append "activity" to the query
-    query_with_activity = f"{query} activity"
+    query_with_activity = f"{query} adult star"
 
     # Step 2: Get the vqd token
     vqd = get_vqd_token(query_with_activity)
