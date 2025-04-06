@@ -8,7 +8,7 @@ app = Flask(__name__)
 # Serve the index.html file
 @app.route('/')
 def index():
-    return render_template('./templates/index.html')
+    return render_template('index.html')
 
 def get_vqd_token(query):
     """Retrieve the vqd token required for DuckDuckGo image search."""
