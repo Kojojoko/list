@@ -126,7 +126,7 @@
 
     <script>
         async function fetchImage(query) {
-            const response = await fetch(`http://127.0.0.1:5000/get_image?query=${encodeURIComponent(query)}`);
+            const response = await fetch(`https://list-br33.onrender.com/get_image?query=${encodeURIComponent(query)}`);
             const data = await response.json();
             if (data.image_url) {
                 return data.image_url;
