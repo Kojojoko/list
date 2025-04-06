@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fap List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0008c5b;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        h1 {
+            font-family: 'Brush Script MT', cursive;
+            font-size: 5rem;
+            margin-bottom: 20px;
+        }
+
+        .input-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        #query {
+            width: 300px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1rem;
+            margin-right: 10px;
+        }
+
+        button {
+            background-color: #ffffff;
+            color: rgb(0, 0, 0);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #d400ff;
+        }
+
+        .clear {
+            background-color: #ff4d4d;
+            margin-left: 10px;
+        }
+
+        .clear:hover {
+            background-color: #e63939;
+        }
+
+        #tasks-container {
+            width: 100%;
+            margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap; /* Allow tasks to wrap to the next row */
+            gap: 20px; /* Add spacing between tasks */
+            justify-content: center; /* Center tasks horizontally */
+        }
+
+        .task {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #ccc;
+            padding: 20px;
+            width: 250px; /* Set a fixed width for each task */
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .task img {
+            max-width: 100%;
+            max-height: 400px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+        }
+
+        .task-name {
+            font-size: 1.5rem;
+            color: #333;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .done-button {
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .done-button:hover {
+            background-color: #e63939;
+        }
+    </style>
+</head>
+<body>
+    <h1>Fap List</h1>
+    <div class="input-container">
+        <input type="text" id="query" placeholder="Enter Star name">
+        <button onclick="addTask()">Add</button>
+        <button onclick="clearTasks()" class="clear">Clear All</button>
+    </div>
+    <div id="tasks-container"></div>
+
+    <script>
+        async function fetchImage(query) {
+            const response = await fetch(`http://127.0.0.1:5000/get_image?query=${encodeURIComponent(query)}`);
+            const data = await response.json();
+            if (data.image_url) {
+                return data.image_url;
+            } else {
+                throw new Error(data.error || 'Failed to fetch image.');
+            }
+        }
+
+        async function addTask() {
+            const query = document.getElementById('query').value;
+            if (!query) {
+                alert('Please enter a task name.');
+                return;
+            }
+
+            try {
+                const imageUrl = await fetchImage(query);
+
+                // Create a new task element
+                const taskContainer = document.getElementById('tasks-container');
+                const taskElement = document.createElement('div');
+                taskElement.className = 'task';
+
+                // Add the image
+                const imgElement = document.createElement('img');
+                imgElement.src = imageUrl;
+                taskElement.appendChild(imgElement);
+
+                // Add the task name
+                const taskNameElement = document.createElement('span');
+                taskNameElement.className = 'task-name';
+                taskNameElement.textContent = query;
+                taskElement.appendChild(taskNameElement);
+
+                // Add the "Done" button
+                const doneButton = document.createElement('button');
+                doneButton.className = 'done-button';
+                doneButton.textContent = 'Done';
+                doneButton.onclick = () => taskContainer.removeChild(taskElement);
+                taskElement.appendChild(doneButton);
+
+                // Append the task to the container
+                taskContainer.appendChild(taskElement);
+
+                // Clear the input field
+                document.getElementById('query').value = '';
+            } catch (error) {
+                alert(error.message);
+            }
+        }
+
+        function clearTasks() {
+            const taskContainer = document.getElementById('tasks-container');
+            taskContainer.innerHTML = ''; // Clear all tasks
+            console.log("All tasks cleared.");
+        }
+
+        // Add event listener to trigger "Add" button on Enter key press
+        document.getElementById('query').addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                addTask();
+            }
+        });
+    </script>
+</body>
+</html>
